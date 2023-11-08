@@ -8,11 +8,9 @@ resource "aws_instance" "ec2_instance" {
 
   security_groups = [aws_security_group.ec2_security_group.name]
 
-  user_data = <<-EOF
-              #!/bin/bash
-              echo "Hello, World 1" > index.html
-              python3 -m http.server 8080 &
-              EOF
+  user_data = var.is_tmplt_req ? templatefile("./aws-ec2-instance/user_data.sh.tmpl", {
+    instance_name = var.instance_name
+  }) : ""
 
   tags = {
     Name = var.instance_name

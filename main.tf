@@ -8,11 +8,21 @@ output "ec2_dns" {
   value       = module.aws-ec2-instance-1.ec2_dns
 }
 
+variable "instanceName" {
+  description = "The name of the EC2 instance"
+  type        = string
+}
+
+locals {
+  environment = terraform.workspace
+}
+
 module "aws-ec2-instance-1" {
   source                  = "./aws-ec2-instance"
   ami_name                = "ami-06aa3f7caf3a30282" # Ubuntu 20.04 LTS
   instance_type           = "t2.micro"
-  instance_name           = "my-server"
+  instance_name           = "${var.instanceName}-${local.environment}"
   ec2_security_group_name = "http-https-ssh-sg"
-  ec2_key                 = "my-server-key"
+  ec2_key                 = local.environment == "prod" ? "ssh-key-prod" : "ssh-key-dev"
+  is_tmplt_req            = true
 }

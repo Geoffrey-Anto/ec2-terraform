@@ -27,3 +27,9 @@ variable "ec2_key" {
   type        = string
   default     = "my-server-key"
 }
+
+variable "is_tmplt_req" {
+  description = "Is template required"
+  type        = bool
+  default     = true
+}
