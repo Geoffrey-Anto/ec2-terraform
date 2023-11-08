@@ -1,77 +1,18 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 3.0"
-    }
-  }
+output "ec2_ip" {
+  description = "The public IP of the EC2 instance"
+  value       = module.aws-ec2-instance-1.ec2_ip
 }
 
-provider "aws" {
-  region = "us-east-1"
+output "ec2_dns" {
+  description = "The public DNS of the EC2 instance"
+  value       = module.aws-ec2-instance-1.ec2_dns
 }
 
-resource "aws_instance" "ec2_instance" {
-  ami           = var.ami_name
-  instance_type = var.instance_type
-
-  associate_public_ip_address = true
-
-  key_name = var.ec2_key
-
-  security_groups = [aws_security_group.ec2_security_group.name]
-
-  tags = {
-    Name = var.instance_name
-  }
-}
-
-resource "aws_security_group" "ec2_security_group" {
-  name = var.ec2_security_group_name
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 3000
-    to_port     = 3000
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = var.ec2_security_group_name
-  }
+module "aws-ec2-instance-1" {
+  source                  = "./aws-ec2-instance"
+  ami_name                = "ami-06aa3f7caf3a30282" # Ubuntu 20.04 LTS
+  instance_type           = "t2.micro"
+  instance_name           = "my-server"
+  ec2_security_group_name = "http-https-ssh-sg"
+  ec2_key                 = "my-server-key"
 }
