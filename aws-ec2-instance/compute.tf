@@ -8,9 +8,13 @@ resource "aws_instance" "ec2_instance" {
 
   security_groups = [aws_security_group.ec2_security_group.name]
 
-  user_data = var.is_tmplt_req ? templatefile("./aws-ec2-instance/user_data.sh.tmpl", {
+  user_data = var.instance_preset == "ansible" ? templatefile("./aws-ec2-instance/ansible.sh.tmpl", {
     instance_name = var.instance_name
-  }) : ""
+    }) : var.instance_preset == "jenkins" ? templatefile("./aws-ec2-instance/jenkins.sh.tmpl", {
+    instance_name = var.instance_name
+    }) : templatefile("./aws-ec2-instance/default.sh.tmpl", {
+    instance_name = var.instance_name
+  })
 
   tags = {
     Name = var.instance_name

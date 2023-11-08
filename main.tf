@@ -13,6 +13,11 @@ variable "instanceName" {
   type        = string
 }
 
+variable "instancePreset" {
+  description = "The name of preset: (default, ansible, jenkins)"
+  type        = string
+}
+
 locals {
   environment = terraform.workspace
 }
@@ -24,5 +29,5 @@ module "aws-ec2-instance-1" {
   instance_name           = "${var.instanceName}-${local.environment}"
   ec2_security_group_name = "http-https-ssh-sg"
   ec2_key                 = local.environment == "prod" ? "ssh-key-prod" : "ssh-key-dev"
-  is_tmplt_req            = true
+  instance_preset         = var.instancePreset
 }
