@@ -28,8 +28,8 @@ variable "ec2_key" {
   default     = "my-server-key"
 }
 
-variable "is_tmplt_req" {
-  description = "Is template required"
-  type        = bool
-  default     = true
+variable "instance_preset" {
+  description = "The name of preset: (default, ansible, jenkins)"
+  type        = string
+  default     = "default"
 }
